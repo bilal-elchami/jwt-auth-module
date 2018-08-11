@@ -11,7 +11,7 @@ public interface UserService {
 
     List<User> findAll();
 
-    String signIn(String username, String password);
+    String signIn(String username, String password) throws Exception;
 
     String signUp(User user);
 

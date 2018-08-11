@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.live.bilalchami.jwtauthcomponent.model.base.BaseEntity;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import java.util.Date;
@@ -20,7 +21,7 @@ public class User extends BaseEntity {
     private String password;
     private String salt;
 
-    @ManyToMany(mappedBy = "users")
+    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "users")
     private List<Role> roles;
 
 

@@ -23,7 +23,7 @@ public class UserController {
 
     @PostMapping("/signin")
     public String signIn(@RequestParam String username,
-                         @RequestParam String password) {
+                         @RequestParam String password) throws Exception {
         return userService.signIn(username, password);
     }
 
