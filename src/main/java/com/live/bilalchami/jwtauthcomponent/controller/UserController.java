@@ -1,5 +1,6 @@
 package com.live.bilalchami.jwtauthcomponent.controller;
 
+import com.live.bilalchami.jwtauthcomponent.exceptions.UsernameAlreadyExistsException;
 import com.live.bilalchami.jwtauthcomponent.model.User;
 import com.live.bilalchami.jwtauthcomponent.service.interfaces.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ public class UserController {
     private UserService userService;
 
     @GetMapping
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public List<User> getAllUsers() {
         return userService.findAll();
     }
@@ -28,7 +30,7 @@ public class UserController {
     }
 
     @PostMapping("/signup")
-    public String signUp(@RequestBody User user) {
+    public String signUp(@RequestBody User user) throws UsernameAlreadyExistsException {
         return userService.signUp(user);
     }
 

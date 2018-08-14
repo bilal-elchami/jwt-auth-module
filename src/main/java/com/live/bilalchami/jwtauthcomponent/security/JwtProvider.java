@@ -1,7 +1,6 @@
 package com.live.bilalchami.jwtauthcomponent.security;
 
 import com.live.bilalchami.jwtauthcomponent.model.Role;
-import com.live.bilalchami.jwtauthcomponent.service.interfaces.UserService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
@@ -29,7 +28,7 @@ public class JwtProvider {
     private long validityInMilliseconds = 3600000; // 1 hour
 
     @Autowired
-    private UserService userService;
+    private CustomAuthenticationProvider authenticationProvider;
 
     @PostConstruct
     protected void init() {
@@ -56,7 +55,7 @@ public class JwtProvider {
     }
 
     public Authentication getAuthentication(String token) {
-        UserDetails userDetails = userService.loadUserByUsername(getUsername(token));
+        UserDetails userDetails = authenticationProvider.loadUserByUsername(getUsername(token));
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 
