@@ -14,8 +14,8 @@ public class Role extends BaseEntity implements GrantedAuthority {
     private String authority;
 
     @JsonIgnore
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
+    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
+    @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"))
     private List<User> users;
 
     public String getName() {
@@ -52,4 +52,12 @@ public class Role extends BaseEntity implements GrantedAuthority {
         user.getRoles().remove(this);
     }
 
+    @Override
+    public String toString() {
+        return "Role{" +
+                "name='" + name + '\'' +
+                ", authority='" + authority + '\'' +
+//                ", users=" + users +
+                '}';
+    }
 }

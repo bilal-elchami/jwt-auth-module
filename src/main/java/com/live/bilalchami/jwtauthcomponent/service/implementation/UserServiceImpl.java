@@ -56,8 +56,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public String signUp(User user) throws UsernameAlreadyExistsException {
         if (!userRepository.existsByUsername(user.getUsername())) {
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
-            userRepository.save(user);
+            // TODO - Fix saving passwords
+            // user.setPassword(passwordEncoder.encode(user.getPassword()));
+            user = userRepository.save(user);
+            System.out.println(userRepository.getOne(user.getId()).getRoles());
+//            user = userRepository.findByUsername(user.getUsername());
             return jwtProvider.createToken(user.getUsername(), user.getRoles());
         } else {
             throw new UsernameAlreadyExistsException("Username is already in use", HttpStatus.UNPROCESSABLE_ENTITY);

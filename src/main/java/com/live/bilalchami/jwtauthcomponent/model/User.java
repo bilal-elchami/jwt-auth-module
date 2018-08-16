@@ -3,10 +3,7 @@ package com.live.bilalchami.jwtauthcomponent.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.live.bilalchami.jwtauthcomponent.model.base.BaseEntity;
 
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
 
@@ -21,9 +18,10 @@ public class User extends BaseEntity {
     private String password;
     private String salt;
 
-    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "users")
+//    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "users")
+    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
+    @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
     private List<Role> roles;
-
 
     public User() {
     }

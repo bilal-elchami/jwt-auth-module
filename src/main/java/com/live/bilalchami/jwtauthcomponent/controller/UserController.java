@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
+import static com.live.bilalchami.jwtauthcomponent.model.UserRoleValue.ROLE_ADMIN;
+import static com.live.bilalchami.jwtauthcomponent.model.UserRoleValue.ROLE_CLIENT;
+
 @RestController
 @RequestMapping("/users")
 public class UserController {
@@ -18,7 +21,7 @@ public class UserController {
     private UserService userService;
 
     @GetMapping
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('" + ROLE_ADMIN + "')")
     public List<User> getAllUsers() {
         return userService.findAll();
     }
@@ -35,21 +38,21 @@ public class UserController {
     }
 
     @DeleteMapping(value = "/{username}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('" + ROLE_ADMIN + "')")
     public String delete(@PathVariable String username) {
         userService.delete(username);
         return username;
     }
 
     @GetMapping(value = "/{username}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('" + ROLE_ADMIN + "')")
     public User search(@PathVariable String username) {
         return userService.findByUsername(username);
     }
 
     @GetMapping(value = "/me")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_CLIENT')")
-    public User whoami(HttpServletRequest req) {
+    @PreAuthorize("hasRole('" + ROLE_ADMIN + "') or hasRole('" + ROLE_CLIENT + "')")
+    public User whoAmI(HttpServletRequest req) {
         return userService.whoAmI(req);
     }
 
