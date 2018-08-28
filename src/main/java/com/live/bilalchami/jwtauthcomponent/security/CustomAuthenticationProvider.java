@@ -23,8 +23,31 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     @Autowired
     UserRepository userRepository;
 
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsernameAndPassword(String username, String password) throws UsernameNotFoundException {
 
+        final User user = userRepository.findByUsername(username);
+        if (user == null) {
+            throw new UsernameNotFoundException("User '" + username + "' not found");
+        }
+        // TODO Change this when adding SALT
+        if (!user.getPassword().equals(password)) {
+            throw new BadCredentialsException("Invalid username/password supplied");
+        }
+        List<GrantedAuthority> authorities = user.getRoles().stream().map(role ->
+                new SimpleGrantedAuthority(role.getAuthority())
+        ).collect(Collectors.toList());
+        return org.springframework.security.core.userdetails.User
+                .withUsername(username)
+                .password(user.getPassword())
+                .authorities(authorities)
+                .accountExpired(false)
+                .accountLocked(false)
+                .credentialsExpired(false)
+                .disabled(false)
+                .build();
+    }
+
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         final User user = userRepository.findByUsername(username);
         if (user == null) {
             throw new UsernameNotFoundException("User '" + username + "' not found");
@@ -46,7 +69,8 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     @Override
     public Authentication authenticate(Authentication auth) throws AuthenticationException {
         String username = auth.getName();
-        UserDetails user = loadUserByUsername(username);
+        String password = auth.getCredentials().toString();
+        UserDetails user = loadUserByUsernameAndPassword(username, password);
         return new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword(), user.getAuthorities());
     }
 

@@ -41,16 +41,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public String signIn(String username, String password) throws BadCredentialsException {
-        User user = findByUsername(username);
-        if (user != null && user.getPassword().equals(password)) {
-            try {
-                authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-                return jwtProvider.createToken(username, userRepository.findByUsername(username).getRoles());
-            } catch (AuthenticationException e) {
-                throw new BadCredentialsException("Invalid username/password supplied");
-            }
-        }
-        throw new BadCredentialsException("Wrong username or password");
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+        return jwtProvider.createToken(username, userRepository.findByUsername(username).getRoles());
     }
 
     @Override
