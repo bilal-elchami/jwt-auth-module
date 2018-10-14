@@ -5,14 +5,12 @@ import com.live.bilalchami.jwtauthcomponent.model.User;
 import com.live.bilalchami.jwtauthcomponent.repository.UserRepository;
 import com.live.bilalchami.jwtauthcomponent.security.JwtProvider;
 import com.live.bilalchami.jwtauthcomponent.service.interfaces.UserService;
+import com.live.bilalchami.jwtauthcomponent.utils.PasswordUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +32,9 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    @Autowired
+    private PasswordUtils passwordUtils;
+
     @Override
     public List<User> findAll() {
         return userRepository.findAll();
@@ -48,11 +49,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public String signUp(User user) throws UsernameAlreadyExistsException {
         if (!userRepository.existsByUsername(user.getUsername())) {
-            // TODO - Fix saving passwords
-            // user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+            user.setSalt(passwordUtils.nextSalt());
+            user.setPassword(passwordUtils.toSHA256(user.getSalt() + user.getPassword()));
             user = userRepository.save(user);
-            System.out.println(userRepository.getOne(user.getId()).getRoles());
-//            user = userRepository.findByUsername(user.getUsername());
+
+            // System.out.println(userRepository.getOne(user.getId()).getRoles());
+            // user = userRepository.findByUsername(user.getUsername());
             return jwtProvider.createToken(user.getUsername(), user.getRoles());
         } else {
             throw new UsernameAlreadyExistsException("Username is already in use", HttpStatus.UNPROCESSABLE_ENTITY);

@@ -2,6 +2,7 @@ package com.live.bilalchami.jwtauthcomponent.security;
 
 import com.live.bilalchami.jwtauthcomponent.model.User;
 import com.live.bilalchami.jwtauthcomponent.repository.UserRepository;
+import com.live.bilalchami.jwtauthcomponent.utils.PasswordUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -23,14 +24,18 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    private PasswordUtils passwordUtils;
+
     public UserDetails loadUserByUsernameAndPassword(String username, String password) throws UsernameNotFoundException {
 
         final User user = userRepository.findByUsername(username);
         if (user == null) {
             throw new UsernameNotFoundException("User '" + username + "' not found");
         }
-        // TODO Change this when adding SALT
-        if (!user.getPassword().equals(password)) {
+
+        String hashedValue = passwordUtils.toSHA256(user.getSalt() + password);
+        if (!user.getPassword().equals(hashedValue)) {
             throw new BadCredentialsException("Invalid username/password supplied");
         }
         List<GrantedAuthority> authorities = user.getRoles().stream().map(role ->
