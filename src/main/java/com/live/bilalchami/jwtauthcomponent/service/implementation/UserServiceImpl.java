@@ -4,6 +4,7 @@ import com.live.bilalchami.jwtauthcomponent.exceptions.UsernameAlreadyExistsExce
 import com.live.bilalchami.jwtauthcomponent.model.User;
 import com.live.bilalchami.jwtauthcomponent.repository.UserRepository;
 import com.live.bilalchami.jwtauthcomponent.security.JwtProvider;
+import com.live.bilalchami.jwtauthcomponent.security.model.JwtToken;
 import com.live.bilalchami.jwtauthcomponent.service.interfaces.UserService;
 import com.live.bilalchami.jwtauthcomponent.utils.PasswordUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,22 +42,20 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String signIn(String username, String password) throws BadCredentialsException {
+    public JwtToken signIn(String username, String password) throws BadCredentialsException {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-        return jwtProvider.createToken(username, userRepository.findByUsername(username).getRoles());
+        return new JwtToken(jwtProvider.createToken(username, userRepository.findByUsername(username).getRoles()));
     }
 
     @Override
-    public String signUp(User user) throws UsernameAlreadyExistsException {
+    public JwtToken signUp(User user) throws UsernameAlreadyExistsException {
         if (!userRepository.existsByUsername(user.getUsername())) {
 
             user.setSalt(passwordUtils.nextSalt());
             user.setPassword(passwordUtils.toSHA256(user.getSalt() + user.getPassword()));
             user = userRepository.save(user);
 
-            // System.out.println(userRepository.getOne(user.getId()).getRoles());
-            // user = userRepository.findByUsername(user.getUsername());
-            return jwtProvider.createToken(user.getUsername(), user.getRoles());
+            return new JwtToken(jwtProvider.createToken(user.getUsername(), user.getRoles()));
         } else {
             throw new UsernameAlreadyExistsException("Username is already in use", HttpStatus.UNPROCESSABLE_ENTITY);
         }

@@ -2,6 +2,7 @@ package com.live.bilalchami.jwtauthcomponent.controller;
 
 import com.live.bilalchami.jwtauthcomponent.exceptions.UsernameAlreadyExistsException;
 import com.live.bilalchami.jwtauthcomponent.model.User;
+import com.live.bilalchami.jwtauthcomponent.security.model.JwtToken;
 import com.live.bilalchami.jwtauthcomponent.service.interfaces.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -27,13 +28,13 @@ public class UserController {
     }
 
     @PostMapping("/signin")
-    public String signIn(@RequestParam String username,
-                         @RequestParam String password) throws Exception {
+    public JwtToken signIn(@RequestParam String username,
+                           @RequestParam String password) throws Exception {
         return userService.signIn(username, password);
     }
 
     @PostMapping("/signup")
-    public String signUp(@RequestBody User user) throws UsernameAlreadyExistsException {
+    public JwtToken signUp(@RequestBody User user) throws UsernameAlreadyExistsException {
         return userService.signUp(user);
     }
 
