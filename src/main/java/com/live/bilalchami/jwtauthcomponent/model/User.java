@@ -15,7 +15,9 @@ public class User extends BaseEntity {
     private Date dateOfBirth;
     private String email;
     private String username;
+    @JsonIgnore
     private String password;
+    @JsonIgnore
     private String salt;
 
 //    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "users")

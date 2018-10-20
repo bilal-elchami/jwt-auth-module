@@ -52,7 +52,7 @@ public class UserController {
     }
 
     @GetMapping(value = "/me")
-    @PreAuthorize("hasRole('" + ROLE_ADMIN + "') or hasRole('" + ROLE_CLIENT + "')")
+    @PreAuthorize("isAuthenticated()")
     public User whoAmI(HttpServletRequest req) {
         return userService.whoAmI(req);
     }
