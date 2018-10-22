@@ -12,7 +12,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 import static com.live.bilalchami.jwtauthcomponent.model.UserRoleValue.ROLE_ADMIN;
-import static com.live.bilalchami.jwtauthcomponent.model.UserRoleValue.ROLE_CLIENT;
 
 @RestController
 @RequestMapping("/users")
