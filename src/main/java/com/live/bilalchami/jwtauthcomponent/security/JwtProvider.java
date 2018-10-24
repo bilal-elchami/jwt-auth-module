@@ -6,6 +6,7 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -23,9 +24,11 @@ import java.util.stream.Collectors;
 @Component
 public class JwtProvider {
 
-    private String secretKey = "ChangeMe";
+    @Value("${security.jwt.secret}")
+    private String secretKey;
 
-    private long validityInMilliseconds = 3600000; // 1 hour
+    @Value("${security.jwt.expiry-delay}")
+    private long validityInMilliseconds;
 
     @Autowired
     private CustomAuthenticationProvider authenticationProvider;
@@ -54,7 +57,7 @@ public class JwtProvider {
                 .compact();
     }
 
-    public Authentication getAuthentication(String token) {
+    Authentication getAuthentication(String token) {
         UserDetails userDetails = authenticationProvider.loadUserByUsername(getUsername(token));
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
@@ -66,7 +69,7 @@ public class JwtProvider {
     public String resolveToken(HttpServletRequest req) {
         String bearerToken = req.getHeader("Authorization");
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
-            return bearerToken.substring(7, bearerToken.length());
+            return bearerToken.substring(7);
         }
         return null;
     }
