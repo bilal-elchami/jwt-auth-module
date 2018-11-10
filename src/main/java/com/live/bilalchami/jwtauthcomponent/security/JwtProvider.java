@@ -80,7 +80,8 @@ public class JwtProvider {
             return true;
         } catch (JwtException | IllegalArgumentException e) {
             // TODO Create new exception with error code
-            throw new JwtException("Expired or invalid JWT token");
+            // throw new JwtException("Expired or invalid JWT token");
+            return false;
         }
     }
 }

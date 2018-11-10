@@ -1,6 +1,7 @@
 package com.live.bilalchami.jwtauthcomponent.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.live.bilalchami.jwtauthcomponent.model.base.BaseEntity;
 
 import javax.persistence.*;
@@ -20,7 +21,6 @@ public class User extends BaseEntity {
     @JsonIgnore
     private String salt;
 
-//    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "users")
     @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
     private List<Role> roles;
@@ -68,10 +68,12 @@ public class User extends BaseEntity {
         this.username = username;
     }
 
+    @JsonIgnore
     public String getPassword() {
         return password;
     }
 
+    @JsonProperty
     public void setPassword(String password) {
         this.password = password;
     }
